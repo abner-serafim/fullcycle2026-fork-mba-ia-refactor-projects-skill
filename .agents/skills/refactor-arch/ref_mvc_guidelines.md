@@ -1,14 +1,7 @@
-# Relatório de Auditoria: [Nome do Projeto]
+# Diretrizes para MVC
 
-## Resumo Executivo
-- Total de Vulnerabilidades: X
-- Severidade Média: [CRITICAL/HIGH/MEDIUM/LOW]
-
-## Lista de Problemas
-| ID | Severidade | Problema | Localização |
-|---|---|---|---|
-| 01 | CRITICAL | [Resumo] | [Arquivo:Linha] |
-
-## Sugestão de Plano de Ação
-- [ ] Fase 1: Segregação de Responsabilidades (Extrair lógica de Routes para Controllers).
-- [ ] Fase 2: Mitigação de Riscos de Segurança (Hashing e Variáveis de Ambiente).
+- **Models (`models/`):** Apenas definição de schemas, tipos e métodos de acesso a dados. Zero lógica de I/O ou roteamento.
+- **Controllers (`controllers/`):** Onde a mágica acontece. Recebe a requisição (sanitizada), orquestra o serviço e decide a resposta.
+- **Routes (`routes/`):** Apenas definição de endpoints e mapeamento para controllers.
+- **Services (`services/`):** Lógica pesada, envio de e-mail, integração com terceiros.
+- **Config (`config/`):** Leitura de variáveis de ambiente (`process.env` ou `os.getenv`).
