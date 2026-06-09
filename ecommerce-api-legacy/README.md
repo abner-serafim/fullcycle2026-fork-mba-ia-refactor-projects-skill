@@ -4,7 +4,11 @@ LMS API (com fluxo de checkout) em Node.js/Express usada como entrada do desafio
 
 ## Como rodar
 
+### install nvm
+
 ```bash
+nvm install 18
+nvm use 18
 npm install
 npm start
 ```
