@@ -1,3 +1,126 @@
+
+# MBA em IA — Criação de Skills para Refatoração Arquitetural Automatizada
+**Aluno:** Abner Serafim Arede  
+**Ferramenta Base:** Google Antigravity / Gemini CLI  
+
+Este repositório contém a entrega do desafio de automação arquitetural, utilizando uma Custom Skill especializada na migração de legados desestruturados para o padrão MVC sanitizado.
+
+---
+
+## 1. Análise Manual dos Projetos Legados
+
+Antes de disparar a automação baseada em agentes, realizamos uma auditoria estática manual para catalogar os piores code smells e falhas graves de SOLID e segurança nos 3 ecossistemas:
+
+### A) code-smells-project (Python/Flask — E-commerce API)
+- **CRITICAL [Segurança]:** Concatenação direta de inputs de requisições HTTP em strings SQL cruas (`models.py`), abrindo margem para SQL Injection generalizado.
+- **CRITICAL [Infraestrutura]:** Exposição de credenciais sensíveis e `SECRET_KEY` em formato hardcoded no arquivo `app.py`.
+- **CRITICAL [Segurança]:** Endpoint de Backdoor `/admin/query` permitindo execução de código SQL arbitrário por requisições remotas sem autenticação.
+- **HIGH [Performance]:** Problema clássico de concorrência e loops N+1 executando múltiplas subqueries síncronas para carregar itens e nomes de produtos dentro de loops de pedidos.
+- **HIGH [Criptografia]:** Armazenamento de senhas de usuários em formato de texto cru (Plain Text).
+
+### B) ecommerce-api-legacy (Node.js/Express — LMS API)
+- **CRITICAL [Segurança]:** Exposição de tokens reais de API de Gateway de Pagamentos e chaves mestras de banco de dados em texto puro no arquivo `utils.js`.
+- **CRITICAL [Criptografia]:** Algoritmo customizado inseguro e ineficiente de hashing de senhas baseado em codificação repetida em Base64 truncada (`badCrypto`).
+- **HIGH [Arquitetura]:** Violação severa do SRP (Princípio de Responsabilidade Única) no objeto centralizado `AppManager.js`, acumulando inicialização de tabelas, regras transacionais, tratamento HTTP e escrita de logs locais na mesma classe.
+- **HIGH [Performance]:** Encadeamento asfíxico de callbacks aninhados gerando um gargalo N+1 em cascata exponencial de I/O para geração de relatórios financeiros.
+- **MEDIUM [Resiliência]:** Remoção direta e física de usuários sem tratamento em cascata ou deleção lógica, gerando registros órfãos e falhas de referência nula nos relatórios.
+
+### C) task-manager-api (Python/Flask — Gerenciador Parcialmente Organizado)
+- **CRITICAL [Segurança]:** Credenciais estáticas de autenticação de servidores SMTP reais expostas na infraestrutura do `notification_service.py`.
+- **CRITICAL [Criptografia]:** Utilização do algoritmo criptograficamente quebrado e obsoleto MD5 para geração de hashes de senhas.
+- **HIGH [Segurança]:** Vazamento explícito de dados confidenciais: o dicionário de serialização expõe a propriedade `'password'` diretamente nas respostas JSON da API de login.
+- **HIGH [Performance]:** Multiplicação de requisições assíncronas síncronas de ORM em loop (N+1) para buscar propriedades de relacionamento (`User` e `Category`) para cada linha de tarefa.
+
+---
+
+## 2. Construção e Engenharia da Custom Skill
+
+A Skill foi encapsulada na pasta `.agent/skills/refactor-arch/` com uma abordagem modular para garantir portabilidade completa em ambientes baseados no ecossistema do Google Gemini:
+
+- **`SKILL.md`**: Orquestrador central que define o ciclo de vida sequencial da execução (Fase 1: Reconhecimento, Fase 2: Auditoria com Trava de Segurança e Fase 3: Transformação Arquitetural).
+- **`ref_analysis_heuristics.md`**: Fornece os gatilhos e padrões de varredura estática para dedução de linguagem, esquemas de tabelas de banco e identificação automática do domínio de negócio.
+- **`ref_anti_patterns.md`**: Catálogo estruturado contendo a matriz de criticidade, sinais de detecção e impactos de 8 anti-patterns mínimos.
+- **`ref_mvc_guidelines.md`**: Define o contrato estrito de isolamento para as camadas de destino (`models/`, `controllers/`, `routes/`).
+- **`ref_refactoring_playbook.md`**: Manual técnico operacional contendo exemplos de transformações de código antes e depois (como conversão de queries para parâmetros parametrizados e hashing por `bcrypt`).
+
+**Trava de Segurança:** A Fase 2 suspende a execução obrigatoriamente e exige a entrada explícita do usuário (`[y/n]`) antes de iniciar modificações destrutivas ou criar caminhos físicos.
+
+---
+
+## 3. Resultados Operacionais e Validação
+
+A Skill executou com resiliência nos três alvos, gerando relatórios detalhados na pasta `reports/`.
+
+### Comparativo Estrutural (Antes vs Depois)
+- **Antes:** Arquivos centralizados, controllers extensos aglomerando lógica de persistência SQL e regras operacionais.
+- **Depois:** Estrutura modular MVC purista. Lógica de banco isolada nos Models, controllers limpos injetados e orquestrados por sub-rotas isoladas por domínio.
+
+### Checklist de Validação Preenchido
+- [x] Linguagem e Framework detectados corretamente em todas as codebases.
+- [x] Mínimo de 5 findings detalhados por severidade e linhas exatas no relatório.
+- [x] Extração de configurações sensíveis para ambientes controlados por arquivos `.env`.
+- [x] Implementação de algoritmos modernos de hashing (Bcrypt) e queries parametrizadas.
+- [x] Aplicação inicia normalmente sem erros estruturais ou quebras de sintaxe (Exit Code 0).
+- [x] Todos os endpoints originais continuam operacionais através do roteamento desacoplado.
+
+---
+
+## 4. Como Executar
+
+1. Abra o espaço de trabalho na IDE **Google Antigravity**.
+2. Certifique-se de que a extensão do **Gemini Code Assist** possui acesso à pasta `.agent/skills/refactor-arch/`.
+3. Invoque o comando customizado no prompt contextual:
+    ```bash
+    /refactor-arch
+    ```
+
+4. Revise os relatórios gerados em `reports/` e conceda a permissão digitando `y` para disparar a refatoração.
+
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+---
+## 🔍 ABAIXO A TAREFA INICIAL DO CURSO QUE ME FEZ CRIAR ESSA SKILL
+---
+---
+---
+---
+---
+---
+---
+---
+
+
 # Criação de Skills — Refatoração Arquitetural Automatizada
 
 Ao longo do curso você aprendeu o que são Skills e como elas permitem que um agente de IA atue como um especialista em tarefas específicas. Agora imagine o seguinte cenário: você herdou 3 projetos legados com problemas de arquitetura, segurança e qualidade de código. Revisar e corrigir tudo manualmente levaria dias.
