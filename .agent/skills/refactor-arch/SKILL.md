@@ -1,7 +1,7 @@
-# Skill: Automated Architectural Refactoring to MVC (`/refactor-arch`)
-
-## Description
-Skill especializada e agnóstica de tecnologia projetada para analisar bases de código legadas (Python/Flask e Node.js/Express), auditar vulnerabilidades críticas, falhas de SOLID, APIs obsoletas e code smells, gerando um relatório estruturado e automatizando a reestruturação arquitetural completa para o padrão Model-View-Controller (MVC) sem quebrar a aplicação.
+---
+name: refactor-arch
+description: Skill especializada e agnóstica de tecnologia projetada para analisar bases de código legadas (Python/Flask e Node.js/Express), auditar vulnerabilidades críticas, falhas de SOLID, APIs obsoletas e code smells, gerando um relatório estruturado e automatizando a reestruturação arquitetural completa para o padrão Model-View-Controller (MVC) sem quebrar a aplicação.
+---
 
 ## Requirements & Constraints
 - **Agnóstica de Tecnologia:** Deve funcionar perfeitamente em ecossistemas Python e Node.js, adaptando-se tanto a projetos totalmente desestruturados (monólitos em poucos arquivos) quanto a bases parcialmente organizadas.
