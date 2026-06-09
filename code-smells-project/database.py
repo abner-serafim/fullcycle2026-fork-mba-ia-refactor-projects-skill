@@ -1,13 +1,18 @@
 import sqlite3
 import os
+import bcrypt
+from config import settings
 
 db_connection = None
-db_path = "loja.db"
+
+def hash_password(password: str) -> str:
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
 
 def get_db():
     global db_connection
     if db_connection is None:
-        db_connection = sqlite3.connect(db_path, check_same_thread=False)
+        db_connection = sqlite3.connect(settings.DATABASE_PATH, check_same_thread=False)
         db_connection.row_factory = sqlite3.Row
         cursor = db_connection.cursor()
 
@@ -73,9 +78,9 @@ def get_db():
             )
 
             usuarios = [
-                ("Admin", "admin@loja.com", "admin123", "admin"),
-                ("João Silva", "joao@email.com", "123456", "cliente"),
-                ("Maria Santos", "maria@email.com", "senha123", "cliente"),
+                ("Admin", "admin@loja.com", hash_password("admin123"), "admin"),
+                ("João Silva", "joao@email.com", hash_password("123456"), "cliente"),
+                ("Maria Santos", "maria@email.com", hash_password("senha123"), "cliente"),
             ]
             cursor.executemany(
                 "INSERT INTO usuarios (nome, email, senha, tipo) VALUES (?, ?, ?, ?)",

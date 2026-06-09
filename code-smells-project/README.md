@@ -5,6 +5,8 @@ API de E-commerce em Python/Flask usada como entrada do desafio `refactor-arch`.
 ## Como rodar
 
 ```bash
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 python app.py
 ```
