@@ -1,6 +1,6 @@
 from database import db
 from datetime import datetime
-import hashlib
+import bcrypt
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -25,11 +25,17 @@ class User(db.Model):
         }
 
     def set_password(self, pwd):
-
-        self.password = hashlib.md5(pwd.encode()).hexdigest()
+        salt = bcrypt.gensalt()
+        self.password = bcrypt.hashpw(pwd.encode('utf-8'), salt).decode('utf-8')
 
     def check_password(self, pwd):
-        return self.password == hashlib.md5(pwd.encode()).hexdigest()
+        try:
+            # Try to verify using bcrypt
+            return bcrypt.checkpw(pwd.encode('utf-8'), self.password.encode('utf-8'))
+        except Exception:
+            # Fallback for old MD5 passwords
+            import hashlib
+            return self.password == hashlib.md5(pwd.encode()).hexdigest()
 
     def is_admin(self):
         if self.role == 'admin':
