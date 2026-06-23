@@ -1,10 +1,11 @@
 # Catálogo de Anti-patterns e Vulnerabilidades
 
-1. **SQL Injection (Critical):** Concatenação direta de inputs em strings SQL. Detecção: Uso de operadores `+` ou f-strings em queries.
-2. **Hardcoded Secrets (Critical):** Chaves, senhas ou tokens expostos. Detecção: Strings como "SECRET_KEY", "password", "token" atribuídas a constantes.
-3. **N+1 Query Problem (High):** Queries dentro de loops. Detecção: `for` ou `map` contendo chamadas de banco de dados (`query.get`, `find`).
-4. **God Class/Method (High):** Classes que fazem de tudo. Detecção: Arquivos com > 200 linhas misturando roteamento, regra de negócio e I/O.
-5. **Plaintext Password (High):** Senhas sem hashing. Detecção: Armazenamento de campos `password` sem chamadas a bibliotecas de hash (bcrypt/argon2).
-6. **Error Leaking (Medium):** Retorno de `str(e)` ou stack trace. Detecção: `except Exception as e: return jsonify(str(e))`.
-7. **Callback Hell (Medium):** Aninhamento excessivo de funções assíncronas. Detecção: > 3 níveis de aninhamento em Node.js.
-8. **Magic Numbers (Low):** Valores numéricos fixos em regras de negócio. Detecção: `if x > 1000:`.
+1. **SQL Injection (Critical):** Concatenação direta de inputs em strings SQL cruas. Detecção: Uso de operadores + ou f-strings/template literals em blocos executores de queries de banco de dados.
+2. **Hardcoded Secrets (Critical):** Chaves secretas, senhas, chaves de API de gateways de pagamento ou tokens expostos diretamente no código. Detecção: Strings associadas a chaves atribuídas de forma estática.
+3. **N+1 Query Problem (High):** Execução de consultas SQL repetitivas dentro de laços de repetição (loops síncronos ou assíncronos em cascata). Detecção: Loops contendo chamadas de persistência ou ORM.
+4. **God Class/Method (High):** Classes ou arquivos monolíticos centrais que acumulam inicialização de tabelas, regras de negócio, tratamento HTTP e escrita de logs. Detecção: Arquivos com lógica misturada sem responsabilidade única (SRP).
+5. **Plaintext Password (High):** Armazenamento de senhas de usuários sem criptografia robusta ou hashes apropriados. Detecção: Atribuição direta de senhas cruas ao banco de dados.
+6. **Error Leaking (Medium):** Retorno explícito do stack trace completo ou strings brutas de exceções internas para o cliente HTTP. Detecção: Uso direto de str(e) ou retornos não higienizados em blocos try/except ou catch.
+7. **Callback Hell (Medium):** Encadeamento asfíxico e aninhamento excessivo de funções de retorno assíncronas gerando gargalo de I/O. Detecção: Mais de 3 níveis de aninhamento de callbacks em Javascript/Node.js.
+8. **Magic Numbers (Low):** Uso de valores numéricos ou literais fixos e soltos diretamente nas regras de validação ou regras de negócio. Detecção: Comparações estáticas com números sem nomeação clara.
+9. **Deprecated / Obsolete APIs (Medium):** Uso de funções, métodos ou algoritmos criptograficamente quebrados, obsoletos ou descontinuados (ex: uso do módulo md5 nativo, hashing customizado truncado em Base64, ou chamadas síncronas de escrita local obsoletas). Detecção: Importação ou invocação de funções e pacotes descontinuados.
