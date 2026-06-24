@@ -4,6 +4,8 @@ from models.user import User
 from models.task import Task
 import re
 
+MIN_PASSWORD_LENGTH = 4
+
 class UserController:
     @staticmethod
     def get_users():
@@ -56,8 +58,8 @@ class UserController:
         if not re.match(r'^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$', email):
             return jsonify({'error': 'Email inválido'}), 400
 
-        if len(password) < 4:
-            return jsonify({'error': 'Senha deve ter no mínimo 4 caracteres'}), 400
+        if len(password) < MIN_PASSWORD_LENGTH:
+            return jsonify({'error': f'Senha deve ter no mínimo {MIN_PASSWORD_LENGTH} caracteres'}), 400
 
         existing = User.query.filter_by(email=email).first()
         if existing:
@@ -105,7 +107,7 @@ class UserController:
             user.email = data['email']
 
         if 'password' in data:
-            if len(data['password']) < 4:
+            if len(data['password']) < MIN_PASSWORD_LENGTH:
                 return jsonify({'error': 'Senha muito curta'}), 400
             user.set_password(data['password'])
 

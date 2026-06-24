@@ -18,7 +18,6 @@ class User(db.Model):
             'id': self.id,
             'name': self.name,
             'email': self.email,
-            'password': self.password,
             'role': self.role,
             'active': self.active,
             'created_at': str(self.created_at)

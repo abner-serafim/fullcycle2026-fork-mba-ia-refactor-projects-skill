@@ -5,6 +5,10 @@ from models.user import User
 from models.category import Category
 from datetime import datetime
 
+DEFAULT_PRIORITY = 3
+MIN_PRIORITY = 1
+MAX_PRIORITY = 5
+
 class TaskController:
     @staticmethod
     def get_tasks():
@@ -86,7 +90,7 @@ class TaskController:
 
         description = data.get('description', '')
         status = data.get('status', 'pending')
-        priority = data.get('priority', 3)
+        priority = data.get('priority', DEFAULT_PRIORITY)
         user_id = data.get('user_id')
         category_id = data.get('category_id')
         due_date = data.get('due_date')
@@ -95,8 +99,8 @@ class TaskController:
         if status not in ['pending', 'in_progress', 'done', 'cancelled']:
             return jsonify({'error': 'Status inválido'}), 400
 
-        if priority < 1 or priority > 5:
-            return jsonify({'error': 'Prioridade deve ser entre 1 e 5'}), 400
+        if priority < MIN_PRIORITY or priority > MAX_PRIORITY:
+            return jsonify({'error': f'Prioridade deve ser entre {MIN_PRIORITY} e {MAX_PRIORITY}'}), 400
 
         if user_id:
             user = User.query.get(user_id)
