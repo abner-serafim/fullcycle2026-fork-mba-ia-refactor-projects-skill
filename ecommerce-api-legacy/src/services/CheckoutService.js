@@ -7,6 +7,11 @@ const AuthService = require('./AuthService');
 const env = require('../config/env');
 const { logAndCache } = require('../utils');
 
+const DEFAULT_PASSWORD_SEED = "123456";
+const VISA_CARD_PREFIX = "4";
+const STATUS_PAID = "PAID";
+const STATUS_DENIED = "DENIED";
+
 class CheckoutService {
     static async processCheckout({ username, email, password, courseId, cardNumber }) {
         const course = await CourseModel.findActiveById(courseId);
@@ -20,16 +25,16 @@ class CheckoutService {
         let userId;
 
         if (!user) {
-            const passwordHash = AuthService.hashPassword(password || "123456");
+            const passwordHash = AuthService.hashPassword(password || DEFAULT_PASSWORD_SEED);
             userId = await UserModel.create(username, email, passwordHash);
         } else {
             userId = user.id;
         }
 
         console.log(`Processando cartão ${cardNumber} na chave ${env.paymentGatewayKey}`);
-        const status = cardNumber.startsWith("4") ? "PAID" : "DENIED";
+        const status = cardNumber.startsWith(VISA_CARD_PREFIX) ? STATUS_PAID : STATUS_DENIED;
 
-        if (status === "DENIED") {
+        if (status === STATUS_DENIED) {
             const err = new Error("Pagamento recusado");
             err.statusCode = 400;
             throw err;

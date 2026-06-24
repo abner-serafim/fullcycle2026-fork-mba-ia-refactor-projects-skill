@@ -19,7 +19,8 @@ class CheckoutController {
             return res.status(200).json({ msg: "Sucesso", enrollment_id: result.enrollmentId });
         } catch (err) {
             const statusCode = err.statusCode || 500;
-            return res.status(statusCode).send(err.message);
+            const message = statusCode === 500 ? "Erro interno no servidor" : err.message;
+            return res.status(statusCode).send(message);
         }
     }
 }
