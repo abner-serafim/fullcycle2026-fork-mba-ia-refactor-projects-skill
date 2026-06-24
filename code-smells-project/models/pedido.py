@@ -1,5 +1,14 @@
 from database import get_db
 
+# Constantes de regras comerciais de desconto
+LIMITE_FATURAMENTO_ALTO = 10000.0
+TAXA_DESCONTO_ALTO = 0.1
+LIMITE_FATURAMENTO_MEDIO = 5000.0
+TAXA_DESCONTO_MEDIO = 0.05
+LIMITE_FATURAMENTO_BAIXO = 1000.0
+TAXA_DESCONTO_BAIXO = 0.02
+
+
 def criar_pedido(usuario_id, itens):
     db = get_db()
     cursor = db.cursor()
@@ -175,12 +184,12 @@ def relatorio_vendas():
 
     # Regras de desconto comerciais parametrizadas
     desconto = 0
-    if faturamento > 10000:
-        desconto = faturamento * 0.1
-    elif faturamento > 5000:
-        desconto = faturamento * 0.05
-    elif faturamento > 1000:
-        desconto = faturamento * 0.02
+    if faturamento > LIMITE_FATURAMENTO_ALTO:
+        desconto = faturamento * TAXA_DESCONTO_ALTO
+    elif faturamento > LIMITE_FATURAMENTO_MEDIO:
+        desconto = faturamento * TAXA_DESCONTO_MEDIO
+    elif faturamento > LIMITE_FATURAMENTO_BAIXO:
+        desconto = faturamento * TAXA_DESCONTO_BAIXO
 
     return {
         "total_pedidos": total_pedidos,

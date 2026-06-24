@@ -1,6 +1,10 @@
 from flask import request, jsonify
 from models import produto as produto_model
 
+# Constantes de validação
+PRODUTO_NOME_TAMANHO_MIN = 2
+PRODUTO_NOME_TAMANHO_MAX = 200
+
 def listar_produtos():
     try:
         produtos = produto_model.get_todos_produtos()
@@ -36,8 +40,8 @@ def criar_produto():
 
         if preco < 0 or estoque < 0:
             return jsonify({"erro": "Preço e estoque não podem ser negativos", "sucesso": False}), 400
-        if len(nome) < 2 or len(nome) > 200:
-            return jsonify({"erro": "Nome do produto deve ter entre 2 e 200 caracteres", "sucesso": False}), 400
+        if len(nome) < PRODUTO_NOME_TAMANHO_MIN or len(nome) > PRODUTO_NOME_TAMANHO_MAX:
+            return jsonify({"erro": f"Nome do produto deve ter entre {PRODUTO_NOME_TAMANHO_MIN} e {PRODUTO_NOME_TAMANHO_MAX} caracteres", "sucesso": False}), 400
 
         categorias_validas = ["informatica", "moveis", "vestuario", "geral", "eletronicos", "livros"]
         if categoria not in categorias_validas:

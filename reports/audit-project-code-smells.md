@@ -1,7 +1,7 @@
 # Relatório de Auditoria: code-smells-project
 
 ## Resumo Executivo
-- Total de Vulnerabilidades: 6
+- Total de Vulnerabilidades: 8
 - Severidade Média: HIGH
 
 ## Lista de Problemas
@@ -13,8 +13,12 @@
 | 04 | HIGH | Plaintext Password (senhas de usuários armazenadas e validadas sem algoritmo de hash) | [models.py](file:///home/abneradekz/projetos/estudo/fullcycle-2026/mba-ia-refactor-projects-skill/code-smells-project/models.py#L122) |
 | 05 | HIGH | N+1 Query Problem (consultas em loops em loops nos métodos de listagem de pedidos e itens) | [models.py](file:///home/abneradekz/projetos/estudo/fullcycle-2026/mba-ia-refactor-projects-skill/code-smells-project/models.py#L174-L201) e [models.py](file:///home/abneradekz/projetos/estudo/fullcycle-2026/mba-ia-refactor-projects-skill/code-smells-project/models.py#L203-L233) |
 | 06 | MEDIUM | Error Leaking (exposição de mensagens de exceção internas e caminhos nos retornos de API) | [controllers.py](file:///home/abneradekz/projetos/estudo/fullcycle-2026/mba-ia-refactor-projects-skill/code-smells-project/controllers.py#L12) e outras funções |
+| 07 | LOW | Magic Numbers nas regras de descontos comerciais | [models/pedido.py](file:///home/abneradekz/projetos/estudo/fullcycle-2026/fullcycle2026-fork-mba-ia-refactor-projects-skill/code-smells-project/models/pedido.py#L187-L192) |
+| 08 | LOW | Magic Numbers nos limites de comprimento na validação de nome do produto | [controllers/produto_controller.py](file:///home/abneradekz/projetos/estudo/fullcycle-2026/fullcycle2026-fork-mba-ia-refactor-projects-skill/code-smells-project/controllers/produto_controller.py#L39-L40) |
 
 ## Sugestão de Plano de Ação
 - [x] Fase 1: Segregação de Responsabilidades (Extrair rotas inline de `app.py` e reorganizar em roteador MVC limpo).
 - [x] Fase 2: Mitigação de Riscos de Segurança (Hashing e Variáveis de Ambiente).
 - [x] Fase 3: Otimização de Performance (Remover queries N+1 usando JOINs SQL apropriados).
+- [x] Fase 4: Eliminação de Magic Numbers (Novas diretrizes de auditoria).
+
