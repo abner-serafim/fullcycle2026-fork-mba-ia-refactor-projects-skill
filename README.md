@@ -12,24 +12,31 @@ Este repositório contém a entrega do desafio de automação arquitetural, util
 Antes de disparar a automação baseada em agentes, realizamos uma auditoria estática manual para catalogar os piores code smells e falhas graves de SOLID e segurança nos 3 ecossistemas:
 
 ### A) code-smells-project (Python/Flask — E-commerce API)
-- **CRITICAL [Segurança]:** Concatenação direta de inputs de requisições HTTP em strings SQL cruas (`models.py`), abrindo margem para SQL Injection generalizado.
-- **CRITICAL [Infraestrutura]:** Exposição de credenciais sensíveis e `SECRET_KEY` em formato hardcoded no arquivo `app.py`.
-- **CRITICAL [Segurança]:** Endpoint de Backdoor `/admin/query` permitindo execução de código SQL arbitrário por requisições remotas sem autenticação.
-- **HIGH [Performance]:** Problema clássico de concorrência e loops N+1 executando múltiplas subqueries síncronas para carregar itens e nomes de produtos dentro de loops de pedidos.
-- **HIGH [Criptografia]:** Armazenamento de senhas de usuários em formato de texto cru (Plain Text).
+* **CRITICAL [Segurança]:** Concatenação direta de inputs de requisições HTTP em strings SQL cruas (`models.py`), abrindo margem para SQL Injection generalizado.
+* **CRITICAL [Infraestrutura]:** Exposição de credenciais sensíveis e `SECRET_KEY` em formato hardcoded no arquivo `app.py`.
+* **HIGH [Criptografia]:** Armazenamento de senhas de usuários em formato de texto cru (Plain Text) no banco de dados.
+* **MEDIUM [Arquitetura]:** Mistura de responsabilidades (God Methods) na camada de controller (`controllers.py`), disparando comandos manuais de infraestrutura externa (como print de envio de e-mail/SMS) no meio do fluxo HTTP.
+* **MEDIUM [Qualidade]:** Falta de tratamento de erros estruturado e vazamento de exceções internas brutas (`except Exception as e`) devolvidas diretamente na resposta da API.
+* **LOW [Boas Práticas]:** Presença de Magic Numbers e lógica de negócio acoplada diretamente no Model (`models.py`) para cálculo de descontos comerciais fixos (`10000`, `5000`, etc.).
+* **LOW [Boas Práticas]:** Magic Numbers utilizados nos limites de comprimento para a validação do nome do produto (valores fixos `2` e `200` direto no código).
 
 ### B) ecommerce-api-legacy (Node.js/Express — LMS API)
-- **CRITICAL [Segurança]:** Exposição de tokens reais de API de Gateway de Pagamentos e chaves mestras de banco de dados em texto puro no arquivo `utils.js`.
-- **CRITICAL [Criptografia]:** Algoritmo customizado inseguro e ineficiente de hashing de senhas baseado em codificação repetida em Base64 truncada (`badCrypto`).
-- **HIGH [Arquitetura]:** Violação severa do SRP (Princípio de Responsabilidade Única) no objeto centralizado `AppManager.js`, acumulando inicialização de tabelas, regras transacionais, tratamento HTTP e escrita de logs locais na mesma classe.
-- **HIGH [Performance]:** Encadeamento asfíxico de callbacks aninhados gerando um gargalo N+1 em cascata exponencial de I/O para geração de relatórios financeiros.
-- **MEDIUM [Resiliência]:** Remoção direta e física de usuários sem tratamento em cascata ou deleção lógica, gerando registros órfãos e falhas de referência nula nos relatórios.
+* **CRITICAL [Segurança]:** Exposição de tokens reais de API de Gateway de Pagamentos e chaves mestras de banco de dados em texto puro no arquivo `utils.js`.
+* **CRITICAL [Criptografia]:** Algoritmo customizado inseguro de hashing de senhas baseado em codificação repetida em Base64 truncada (`badCrypto`).
+* **HIGH [Arquitetura]:** Violação severa do SRP (Princípio de Responsabilidade Única) no objeto `AppManager.js`, acumulando inicialização de tabelas, regras transacionais e roteamento.
+* **MEDIUM [Resiliência]:** Remoção direta e física de usuários sem tratamento em cascata ou deleção lógica, gerando registros órfãos nas tabelas de matrículas e pagamentos.
+* **MEDIUM [Performance]:** Callback Hell e alto nível de aninhamento de funções assíncronas gerando um gargalo N+1 em cascata exponencial de I/O para geração de relatórios.
+* **LOW [Boas Práticas]:** Magic Numbers soltos na regra de negócio de checkout (`CheckoutService.js`), como o prefixo de cartão fixo `"4"` ou a senha padrão `"123456"`.
+* **LOW [Qualidade]:** Presença de logs de depuração redundantes (`console.log`) poluindo a saída do terminal de produção e falta de comentários descritivos nos métodos principais.
 
 ### C) task-manager-api (Python/Flask — Gerenciador Parcialmente Organizado)
-- **CRITICAL [Segurança]:** Credenciais estáticas de autenticação de servidores SMTP reais expostas na infraestrutura do `notification_service.py`.
-- **CRITICAL [Criptografia]:** Utilização do algoritmo criptograficamente quebrado e obsoleto MD5 para geração de hashes de senhas.
-- **HIGH [Segurança]:** Vazamento explícito de dados confidenciais: o dicionário de serialização expõe a propriedade `'password'` diretamente nas respostas JSON da API de login.
-- **HIGH [Performance]:** Multiplicação de requisições assíncronas síncronas de ORM em loop (N+1) para buscar propriedades de relacionamento (`User` e `Category`) para cada linha de tarefa.
+* **CRITICAL [Segurança]:** Credenciais estáticas de autenticação de servidores SMTP reais expostas na infraestrutura do `notification_service.py`.
+* **CRITICAL [Criptografia]:** Utilização do algoritmo quebrado e obsoleto MD5 para geração de hashes de senhas.
+* **HIGH [Segurança]:** Vazamento explícito de dados confidenciais: o dicionário de serialização expõe a propriedade `'password'` diretamente nas respostas JSON da API de login.
+* **MEDIUM [Arquitetura]:** Violação das camadas do MVC por parte da camada de rotas (`routes`), assumindo a responsabilidade por regras de negócio (como cálculo lógico de atraso `overdue`) e formatações estatísticas.
+* **MEDIUM [Segurança]:** Uso de APIs obsoletas mantendo um método de fallback MD5 para verificação de senhas legadas junto ao modelo do banco de dados.
+* **LOW [Qualidade]:** Captura de exceções oculta com bloco `except:` genérico que mascara falhas reais e apenas devolve uma string estática, sabotando a rastreabilidade de erros na aplicação.
+* **LOW [Boas Práticas]:** Magic Numbers nas constantes numéricas de prioridade (valores de 1 a 5) e validações de tamanho de senha sem parametrização clara.
 
 ---
 
